@@ -1,10 +1,15 @@
 ---
 - hosts: all
   tasks:
-  - name: Make sure Marti is present
-    user: name=marti shell=/bin/bash groups=sudo append=yes
-  - name: Make sure Marti's key is present
-    authorized_key: user=marti key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDX4f/+tLClKr1dq3GO3L47w2AnXBmLYu6IkI+2pfSGHqH9OT2Otu2F5ug3ScLgk1hH5CEvI+J7xEgxAHcsLrRq/uS48JuDOHdwBX/T6xMzQei4aa19OVClcGsRQBXVyl7I3ArzZ0KaHhowXdA3eIdYmY87n8ovTIlsT6/FSC/3Dv+1gNdfCM8iD62dzn8pz8ShihSDPGENoAdW5LNTXB5sqZ9vk2dbUkaPRG5SBD/pVm9BwwZskb9onOMskIFwpxU3dnRJETcdMwnW8N3QzaeG8tgA4iAtyFWZq3QFnwE8YAjZC04OD6BDA7FkpB0Ihs55PFkuDXzmB3xnFTJrHjnh marti"
-  - name: Make sure passwordless sudo is enabled for users with sudo
-    sudo: yes
+  - name: configure sudoers
     lineinfile: "dest=/etc/sudoers state=present regexp='^%sudo' line='%sudo ALL=(ALL) NOPASSWD: ALL'"
+  - name: create user marti
+    user: name=marti shell=/bin/bash groups=sudo append=yes
+  - name: add ssh key for marti
+    authorized_key: user=marti key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDX4f/+tLClKr1dq3GO3L47w2AnXBmLYu6IkI+2pfSGHqH9OT2Otu2F5ug3ScLgk1hH5CEvI+J7xEgxAHcsLrRq/uS48JuDOHdwBX/T6xMzQei4aa19OVClcGsRQBXVyl7I3ArzZ0KaHhowXdA3eIdYmY87n8ovTIlsT6/FSC/3Dv+1gNdfCM8iD62dzn8pz8ShihSDPGENoAdW5LNTXB5sqZ9vk2dbUkaPRG5SBD/pVm9BwwZskb9onOMskIFwpxU3dnRJETcdMwnW8N3QzaeG8tgA4iAtyFWZq3QFnwE8YAjZC04OD6BDA7FkpB0Ihs55PFkuDXzmB3xnFTJrHjnh marti"
+  - name: configure ssh for marti
+    copy: src=sshconfig dest=/home/marti/.ssh/config owner=marti group=marti mode=0644 force=no
+  - name: configure git for marti
+    copy: src=gitconfig dest=/home/marti/.gitconfig owner=marti group=marti mode=0644
+  - name: configure vi for marti
+    copy: src=exrc dest=/home/marti/.exrc owner=marti group=marti mode=0644
