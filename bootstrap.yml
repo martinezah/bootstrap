@@ -1,5 +1,6 @@
 ---
 - hosts: all
+  sudo: yes
   tasks:
   - name: configure sudoers
     lineinfile: "dest=/etc/sudoers state=present regexp='^%sudo' line='%sudo ALL=(ALL) NOPASSWD: ALL'"
